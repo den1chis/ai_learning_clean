@@ -25,3 +25,4 @@ local_settings.py
 # Models and outputs
 *.pkl
 *.h5
+
