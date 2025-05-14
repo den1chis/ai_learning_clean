@@ -22,3 +22,6 @@ local_settings.py
 # Env files
 .env
 
+# Models and outputs
+*.pkl
+*.h5
