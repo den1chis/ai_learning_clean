@@ -1,74 +1,69 @@
 from django.urls import path
-from . import views
+from core.views import (
+    auth_views,
+    dashboard_views,
+    admin_views,
+    test_views,
+    lesson_views,
+    crud_views,
+    ai_recommendation
+)
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
-    path('', views.home, name='home'),
+    # 🔹 Общие
+    path('', auth_views.home_view, name='home'),
 
-    path('admin-panel/', views.admin_profile_view, name='admin_profile'),
-    path('admin-panel/students/', views.admin_students_view, name='admin_students'),
-    path('admin-panel/students/<int:user_id>/', views.admin_student_detail, name='admin_student_detail'),
+    path('register/', auth_views.register_view, name='register'),
+    path('login/', auth_views.login_view, name='login'),
+    path('logout/', auth_views.logout_view, name='logout'),
 
-
-
-
-    path('register/', views.register_view, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('test/', views.test_view, name='test'),
-    path('profile/settings/', views.profile_settings, name='profile_settings'),
+    # 🔹 Дашборд
+    path('dashboard/', dashboard_views.dashboard_view, name='dashboard'),
+    path('profile/settings/', dashboard_views.profile_settings_view, name='profile_settings'),
 
 
-    path('test/start/',     views.test_start,     name='test_start'),
-    path('test/question/<int:idx>/', views.test_question, name='test_question'),
-    path('test/loading/',   views.test_loading,   name='test_loading'),
-    path('test/result/',    views.test_result,    name='test_result'),
+    # 🔹 Админка
+    path('admin-panel/profile/', admin_views.admin_profile_view, name='admin_profile'),
+    path('admin-panel/students/', admin_views.admin_students_view, name='admin_students'),
+    path('admin-panel/students/<int:user_id>/', admin_views.admin_student_detail, name='admin_student_detail'),
 
+    # 🔹 Demo тест
+    path('demo/test/', ai_recommendation.demo_test, name='demo_test'),
+    path('demo/result/', ai_recommendation.demo_result, name='demo_result'),
 
+    # 🔹 Адаптивное тестирование
+    path('test/start/', test_views.test_start, name='test_start'),
+    path('test/question/<int:idx>/', test_views.test_question, name='test_question'),
+    path('test/loading/', test_views.test_loading, name='test_loading'),
+    path('test/result/', test_views.test_result, name='test_result'),
 
-    path('demo-test/', views.demo_test,   name='demo_test'),
-    path('demo-result/', views.demo_result, name='demo_result'),
+    # 🔹 Уроки и модули
+    path('module/<int:module_id>/', lesson_views.module_lessons_view, name='module_lessons'),
+    path('module/<int:module_id>/lesson/<int:order_index>/', lesson_views.lesson_by_index_view, name='lesson_detail'),
 
+    # 🔹 Курсы
+    path('courses/', crud_views.manage_courses, name='manage_courses'),
+    path('courses/add/', crud_views.add_course, name='add_course'),
+    path('courses/<int:course_id>/edit/', crud_views.edit_course, name='edit_course'),
+    path('courses/<int:course_id>/delete/', crud_views.delete_course, name='delete_course'),
 
+    # 🔹 Модули
+    path('modules/<int:course_id>/', crud_views.manage_modules, name='manage_modules'),
+    path('modules/add/', crud_views.add_module, name='add_module'),
+    path('modules/<int:module_id>/edit/', crud_views.edit_module, name='edit_module'),
+    path('modules/<int:module_id>/delete/', crud_views.delete_module, name='delete_module'),
 
-    path('module/<int:module_id>/lessons/', views.module_lessons_view, name='module_lessons'),
+    # 🔹 Уроки
+    path('lessons/<int:module_id>/', crud_views.manage_lessons, name='manage_lessons'),
+    path('lessons/add/', crud_views.add_lesson, name='add_lesson'),
+    path('lessons/<int:lesson_id>/edit/', crud_views.edit_lesson, name='edit_lesson'),
+    path('lessons/<int:lesson_id>/delete/', crud_views.delete_lesson, name='delete_lesson'),
 
-    path('module/<int:module_id>/lesson/<int:order_index>/', views.lesson_by_index_view, name='lesson_detail'),
-
-
-
-    path('manage/', views.manage_courses, name='manage_courses'),
-    path('manage/course/add/', views.add_course, name='add_course'),
-    path('manage/course/<int:course_id>/edit/', views.edit_course, name='edit_course'),
-    path('manage/course/<int:course_id>/delete/', views.delete_course, name='delete_course'),
-
-    path('manage/course/<int:course_id>/modules/', views.manage_modules, name='manage_modules'),
-    path('manage/module/add/', views.add_module, name='add_module'),
-    path('manage/module/<int:module_id>/edit/', views.edit_module, name='edit_module'),
-    path('manage/module/<int:module_id>/delete/', views.delete_module, name='delete_module'),
-
-    path('manage/module/<int:module_id>/lessons/', views.manage_lessons, name='manage_lessons'),
-    path('manage/lesson/add/', views.add_lesson, name='add_lesson'),
-    path('manage/lesson/<int:lesson_id>/edit/', views.edit_lesson, name='edit_lesson'),
-    path('manage/lesson/<int:lesson_id>/delete/', views.delete_lesson, name='delete_lesson'),
-
-
-    # управление заданием
-    path('manage/lesson/<int:lesson_id>/tasks/', views.manage_tasks, name='manage_tasks'),
-    path('manage/task/add/', views.add_task, name='add_task'),
-    path('manage/task/<int:task_id>/edit/', views.edit_task, name='edit_task'),
-    path('manage/task/<int:task_id>/delete/', views.delete_task, name='delete_task'),
-
-    #управление мини-тестами
-    path('manage/lesson/<int:lesson_id>/quizzes/', views.manage_quizzes, name='manage_quizzes'),
-    path('manage/quiz/add/', views.add_quiz, name='add_quiz'),
-    path('manage/quiz/<int:quiz_id>/edit/', views.edit_quiz, name='edit_quiz'),
-    path('manage/quiz/<int:quiz_id>/delete/', views.delete_quiz, name='delete_quiz'),
-
-    
-
-]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # 🔹 Тесты
+    path('quizzes/<int:lesson_id>/', crud_views.manage_quizzes, name='manage_quizzes'),
+    path('quizzes/add/', crud_views.add_quiz, name='add_quiz'),
+    path('quizzes/<int:quiz_id>/edit/', crud_views.edit_quiz, name='edit_quiz'),
+    path('quizzes/<int:quiz_id>/delete/', crud_views.delete_quiz, name='delete_quiz'),
+]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
