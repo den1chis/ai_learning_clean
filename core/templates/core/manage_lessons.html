@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+{% block title %}Уроки модуля {{ module.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold text-white mb-6">📚 Уроки модуля: {{ module.title }}</h1>
+  <a href="{% url 'add_lesson' %}?module={{ module.id }}" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-white rounded">➕ Добавить урок</a>
+  <a href="{% url 'manage_modules' module.course.id %}" class="ml-4 text-gray-400 hover:text-white">← Назад к модулям</a>
+
+  <div class="mt-6 space-y-4">
+    {% for lesson in lessons %}
+    <div class="bg-[#1e293b] p-4 rounded border border-gray-700">
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-xl text-indigo-300 font-semibold">{{ lesson.title }}</h2>
+          <p class="text-gray-400 text-sm">Порядок: {{ lesson.order_index }}</p>
+        </div>
+        <div class="space-x-2">
+          <a href="{% url 'edit_lesson' lesson.id %}" class="text-blue-400 hover:text-blue-200 font-medium">✏ Редактировать</a>
+          <a href="{% url 'delete_lesson' lesson.id %}" class="text-red-400 hover:text-red-200 font-medium">🗑 Удалить</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-400">Нет уроков в этом модуле.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

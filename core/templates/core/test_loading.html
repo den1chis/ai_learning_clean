@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="relative hero min-h-screen overflow-hidden">
+  <canvas id="ai-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
+  <div class="relative z-10 flex flex-col items-center justify-center h-full space-y-4">
+    <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
+    <p class="text-white">Идёт подсчёт рекомендаций…</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+// same particle JS as above…
+</script>
+<style>
+.loader { border-top-color: #4f46e5; animation: spin 1s infinite linear; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<script>
+setTimeout(()=> window.location.href="{% url 'test_result' %}",1500);
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold text-white mb-6">{{ title }}</h1>
+
+  {% if module %}
+    <a href="{% url 'manage_lessons' module.id %}" class="inline-block mb-6 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-white rounded">
+      📚 Редактировать уроки
+    </a>
+  {% endif %}
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded text-white font-semibold">💾 Сохранить</button>
+    <a href="{% url 'manage_modules' module.course.id %}" class="text-gray-400 hover:text-white ml-4">Отмена</a>
+  </form>
+</div>
+{% endblock %}

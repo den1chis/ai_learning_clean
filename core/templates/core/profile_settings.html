@@ -1,0 +1,59 @@
+{% extends 'core/base.html' %}
+{% block title %}Настройки профиля{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12 text-white space-y-10">
+
+  <h1 class="text-3xl font-bold mb-4">⚙ Настройки профиля</h1>
+
+  {% if messages %}
+    <ul class="mb-4 space-y-2">
+      {% for message in messages %}
+        <li class="text-sm text-green-400">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <!-- Изменение email и аватара -->
+  <form method="post" enctype="multipart/form-data" class="bg-[#1e293b] p-6 rounded-xl border border-gray-700 space-y-4">
+    {% csrf_token %}
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">Email</label>
+      {{ profile_form.email }}
+    </div>
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">Аватар</label>
+      {{ profile_form.avatar }}
+    </div>
+    {% if user.avatar %}
+      <img src="{{ user.avatar.url }}" class="w-20 h-20 rounded-full border mt-2" />
+    {% endif %}
+    <button type="submit" name="update_profile"
+            class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded text-white font-semibold mt-4">
+      💾 Сохранить изменения
+    </button>
+  </form>
+
+  <!-- Смена пароля -->
+  <form method="post" class="bg-[#1e293b] p-6 rounded-xl border border-gray-700 space-y-4">
+    {% csrf_token %}
+    <h2 class="text-xl font-semibold text-white">🔒 Смена пароля</h2>
+
+    {% for field in password_form %}
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <p class="text-red-400 text-sm mt-1">{{ field.errors.0 }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" name="change_password"
+            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white font-semibold mt-4">
+      🔁 Сменить пароль
+    </button>
+  </form>
+
+</div>
+{% endblock %}

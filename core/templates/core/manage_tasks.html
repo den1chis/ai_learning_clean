@@ -1,0 +1,26 @@
+{% extends "core/base.html" %}
+{% block title %}Задания урока {{ lesson.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold text-white mb-6">💡 Задания для урока: {{ lesson.title }}</h1>
+  <a href="{% url 'add_task' %}?lesson={{ lesson.id }}" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-white rounded">➕ Добавить задание</a>
+  <a href="{% url 'manage_lessons' lesson.module.id %}" class="ml-4 text-gray-400 hover:text-white">← Назад к урокам</a>
+
+  <div class="mt-6 space-y-4">
+    {% if tasks %}
+      {% for task in tasks %}
+        <div class="bg-[#1e293b] p-4 rounded border border-gray-700">
+          <p class="text-white">{{ task.description }}</p>
+          <div class="mt-2 space-x-3">
+            <a href="{% url 'edit_task' task.id %}" class="text-blue-400 hover:text-blue-200">✏ Редактировать</a>
+            <a href="{% url 'delete_task' task.id %}" class="text-red-400 hover:text-red-200">🗑 Удалить</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-gray-400">Пока нет заданий для этого урока.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

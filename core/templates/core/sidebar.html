@@ -1,0 +1,48 @@
+{% load custom_tags %}
+
+<h2 class="text-white text-lg font-semibold mb-4">🧭 Навигация</h2>
+
+<div class="space-y-6">
+  {% for mod in all_modules %}
+    <div class="bg-[#1e293b] border border-gray-700 rounded-lg p-2 shadow-md">
+      <button onclick="toggleModule('{{ mod.id }}')" class="flex justify-between items-center w-full text-left px-2 py-2 text-indigo-300 hover:text-white font-semibold text-sm">
+        {{ mod.title }}
+        <span id="arrow-{{ mod.id }}">▼</span>
+      </button>
+
+      <div id="module-{{ mod.id }}" class="pl-2 pt-2 space-y-1">
+        {% with mod.lesson_set.all|dictsort:'order_index' as lessons %}
+          <ul class="space-y-1">
+            {% for less in lessons %}
+              {% with lp=lesson_progress|get_item:less.id %}
+              {% if less.id == current_lesson_id %}
+                <li><span class="text-blue-400 font-semibold text-sm">▶ {{ less.title }}</span></li>
+              {% elif lp and lp.completed %}
+                <li><a href="{% url 'lesson_detail' mod.id less.order_index %}" class="text-green-400 hover:underline text-sm">✔ {{ less.title }}</a></li>
+              {% elif forloop.first or lesson_progress|get_item:lessons|prev_lesson_id:forloop.counter0 %}
+                <li><a href="{% url 'lesson_detail' mod.id less.order_index %}" class="text-indigo-200 hover:underline text-sm">{{ less.title }}</a></li>
+              {% else %}
+                <li class="text-gray-500 text-sm select-none">🔒 {{ less.title }}</li>
+              {% endif %}
+              {% endwith %}
+            {% endfor %}
+          </ul>
+        {% endwith %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<script>
+function toggleModule(id) {
+  const content = document.getElementById('module-' + id);
+  const arrow = document.getElementById('arrow-' + id);
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    arrow.textContent = '▼';
+  } else {
+    content.style.display = 'none';
+    arrow.textContent = '▶';
+  }
+}
+</script>

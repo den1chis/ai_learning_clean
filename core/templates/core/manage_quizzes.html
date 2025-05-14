@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% block title %}Вопросы теста для урока {{ lesson.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold text-white mb-6">🧪 Вопросы теста: {{ lesson.title }}</h1>
+  <a href="{% url 'add_quiz' %}?lesson={{ lesson.id }}" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-white rounded">➕ Добавить вопрос</a>
+  <a href="{% url 'manage_lessons' lesson.module.id %}" class="ml-4 text-gray-400 hover:text-white">← Назад к урокам</a>
+
+  <div class="mt-6 space-y-4">
+    {% if quizzes %}
+      {% for q in quizzes %}
+        <div class="bg-[#1e293b] p-4 rounded border border-gray-700">
+          <p class="text-white font-semibold">{{ q.question_text }}</p>
+          <ul class="text-gray-300 ml-4 mt-2">
+            <li>1. {{ q.option_1 }}</li>
+            <li>2. {{ q.option_2 }}</li>
+            <li>3. {{ q.option_3 }}</li>
+            <li>4. {{ q.option_4 }}</li>
+          </ul>
+          <p class="mt-2 text-sm text-green-400">✔ Правильный: {{ q.correct_option }}</p>
+          <div class="mt-2 space-x-2">
+            <a href="{% url 'edit_quiz' q.id %}" class="text-blue-400 hover:text-blue-200">✏ Редактировать</a>
+            <a href="{% url 'delete_quiz' q.id %}" class="text-red-400 hover:text-red-200">🗑 Удалить</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-gray-400">Нет вопросов к уроку.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

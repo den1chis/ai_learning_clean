@@ -1,0 +1,109 @@
+<!-- core/templates/core/base.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Adaptive AI{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @keyframes gradientFlash {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .gradient-logo {
+            background: linear-gradient(270deg, #4f46e5, #9333ea, #3b82f6, #e11d48, #4f46e5);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlash 3s linear infinite;
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-shadow: 0 0 12px rgba(124, 58, 237, 0.6),
+                         0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .glow {
+            text-shadow:
+                0 0 10px rgba(124, 58, 237, 0.8),
+                0 0 20px rgba(59, 130, 246, 0.6),
+                0 0 30px rgba(147, 51, 234, 0.4);
+        }
+    </style>
+
+    {% block head_extra %}{% endblock %}
+</head>
+<body class="bg-[#0F172A] text-white min-h-screen flex flex-col">
+
+    <!-- Навбар -->
+    <nav class="bg-[#111827] p-4 flex justify-between items-center relative z-20">
+        <!-- Логотип -->
+        <a href="{% url 'home' %}" class="gradient-logo hover:glow transition duration-300">
+            Adaptive AI
+        </a>
+
+        <!-- Справа: меню -->
+        {% if user.is_authenticated %}
+        <div id="user-menu" class="relative inline-block">
+            <!-- Триггер -->
+            <div class="flex items-center space-x-3 cursor-pointer">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full border border-indigo-500">
+                {% else %}
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm font-bold flex items-center justify-center">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+                <span class="text-white text-sm font-medium">{{ user.username }}</span>
+            </div>
+            <!-- Выпадающее меню -->
+            <div id="user-dropdown" class="hidden absolute right-0 top-full w-48 bg-[#1e293b] border border-gray-700 rounded-xl shadow-lg py-2 text-sm z-50">
+                {% if user.role == 'admin' %}
+                    <a href="{% url 'admin_profile' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Профиль администратора</a>
+                {% else %}
+                    <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Личный кабинет</a>
+                {% endif %}
+                <a href="{% url 'profile_settings' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Настройки профиля</a>
+
+                <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Выйти</a>
+            </div>
+
+        {% else %}
+        <div class="space-x-4">
+            <a href="{% url 'login' %}"    class="text-gray-300 hover:text-indigo-400">Войти</a>
+            <a href="{% url 'register' %}" class="text-gray-300 hover:text-indigo-400">Регистрация</a>
+        </div>
+        {% endif %}
+    </nav>
+
+    <!-- Контент -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Футер -->
+    <footer class="text-center text-gray-500 py-4 border-t border-gray-700 relative z-20">
+        &copy; 2025 Adaptive AI Platform. Все права защищены.
+    </footer>
+
+    {% block scripts %}
+    {{ block.super }}
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const menu = document.getElementById('user-menu');
+        const dropdown = document.getElementById('user-dropdown');
+
+        menu.addEventListener('mouseenter', () => {
+            dropdown.classList.remove('hidden');
+        });
+        menu.addEventListener('mouseleave', () => {
+            dropdown.classList.add('hidden');
+        });
+    });
+    </script>
+    {% endblock %}
+</body>
+</html>

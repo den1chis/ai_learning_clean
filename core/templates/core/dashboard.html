@@ -1,0 +1,198 @@
+{% extends "core/base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="relative hero min-h-screen overflow-hidden">
+  <canvas id="ai-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
+  <div class="relative z-10 max-w-4xl mx-auto px-4 py-16 space-y-8">
+
+    <!-- Инфо пользователя -->
+    <div class="bg-[#1e293b]/60 backdrop-blur-md p-6 rounded-xl text-white shadow-xl">
+      <h2 class="text-3xl font-bold mb-4">Привет, {{ user.username }}!</h2>
+      <p><span class="text-gray-400">Email:</span> {{ user.email }}</p>
+      <p><span class="text-gray-400">Последний вход:</span> {{ user.last_login|date:"d.m.Y H:i" }}</p>
+    </div>
+
+    <!-- Блок тестирования / рекомендации -->
+    {% if recommended_module %}
+      <div class="bg-green-800/60 border-l-4 border-green-400 text-green-100 p-6 rounded-lg">
+        <p class="font-semibold text-lg">🎯 Рекомендованный модуль:</p>
+        <h3 class="text-xl font-bold mt-1">{{ recommended_module.title }}</h3>
+        <p class="text-gray-300 mt-2">{{ recommended_module.description|truncatechars:120 }}</p>
+      </div>
+    {% else %}
+      <div class="bg-yellow-800/60 border-l-4 border-yellow-400 text-yellow-100 p-6 rounded-lg">
+        <p class="font-semibold text-lg">🧪 Ты ещё не прошёл входное тестирование!</p>
+        <p class="text-sm mt-1">Оно поможет подобрать оптимальный старт и материалы.</p>
+        <a href="{% url 'test_start' %}"
+           class="inline-block mt-4 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-5 py-2 rounded-xl transition">
+          Пройти тест
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Модули курса -->
+    <div>
+      <h3 class="text-2xl font-semibold text-white mb-4">📘 Модули курса</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {% for info in modules_info %}
+          {% with m=info.module %}
+          <div class="p-5 rounded-xl border border-gray-700 transition
+                      {% if info.unlocked %}
+                        bg-indigo-700 hover:bg-indigo-600
+                      {% else %}
+                        bg-gray-800 opacity-50
+                      {% endif %}">
+
+            <div class="flex justify-between items-center">
+              <h4 class="text-lg font-bold text-white">{{ m.title }}</h4>
+              {% if recommended_module and m.id == recommended_module.id %}
+                <span class="text-yellow-400 text-sm font-semibold">🎯</span>
+              {% elif not info.unlocked %}
+                <span class="text-gray-500 text-sm">🔒</span>
+              {% endif %}
+            </div>
+
+            <p class="text-sm text-gray-300 mt-2">{{ m.description|truncatechars:100 }}</p>
+
+            <div class="mt-4">
+              <div class="w-full bg-gray-600 rounded h-2">
+                <div class="bg-green-400 h-2 rounded"
+                    style="width: {{ info.module_progress }}%">
+                </div>
+              </div>
+              <p class="text-xs text-white mt-1 text-right">
+                {{ info.completed_lessons }}/{{ info.total_lessons }} уроков ({{ info.module_progress }}%)
+              </p>
+            </div>
+
+            {% if info.unlocked %}
+              <a href="{% url 'module_lessons' m.id %}"
+                class="mt-4 inline-block text-indigo-200 hover:text-white text-sm font-medium">
+                Перейти →
+              </a>
+            {% else %}
+              <div class="mt-4 inline-block text-gray-500 text-sm font-medium cursor-not-allowed">
+                Перейти →
+              </div>
+            {% endif %}
+          </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    </div>
+
+
+    <!-- Прогресс пользователя -->
+    <div>
+      <h3 class="text-2xl font-semibold text-white mb-4">📈 Твой прогресс</h3>
+      <div class="w-full bg-gray-700 rounded-xl h-6">
+        <div class="bg-indigo-500 h-6 rounded-xl text-right pr-2 text-sm font-semibold"
+             style="width: {{ progress_percent|default:0 }}%">
+          {{ progress_percent|default:0 }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Последние действия -->
+    <div>
+      <h3 class="text-2xl font-semibold text-white mb-4">🕓 Последние действия</h3>
+      <ul class="space-y-2">
+        {% for action in recent_actions %}
+          <li class="text-sm text-gray-300">• {{ action }}</li>
+        {% empty %}
+          <li class="text-gray-500 text-sm">Нет активности за последнее время.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Настройки профиля -->
+    <div class="text-right">
+      <a href="#" class="text-sm text-gray-400 hover:text-white">⚙ Настройки профиля</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById("ai-canvas");
+    const ctx = canvas.getContext("2d");
+    const hero = document.querySelector(".hero");
+
+    function resize() {
+        canvas.width = hero.clientWidth;
+        canvas.height = hero.clientHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    let particles = [], mouse = {x:null,y:null};
+    const num = 60, maxDist = 100;
+
+    window.addEventListener("mousemove", e => {
+        const r = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - r.left;
+        mouse.y = e.clientY - r.top;
+    });
+    window.addEventListener("mouseout", () => { mouse.x = null; mouse.y = null; });
+
+    class P {
+        constructor() {
+            this.x = Math.random()*canvas.width;
+            this.y = Math.random()*canvas.height;
+            this.vx = (Math.random()-0.5)*1.2;
+            this.vy = (Math.random()-0.5)*1.2;
+            this.size = 1+Math.random();
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            if(this.x<=0||this.x>=canvas.width) this.vx*=-1;
+            if(this.y<=0||this.y>=canvas.height) this.vy*=-1;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,this.size,0,2*Math.PI);
+            ctx.fillStyle="#00ffff"; ctx.fill();
+        }
+    }
+
+    function connect() {
+        for(let i=0;i<particles.length;i++){
+            for(let j=i+1;j<particles.length;j++){
+                const a=particles[i], b=particles[j];
+                const dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
+                if(d<maxDist){
+                    ctx.beginPath();
+                    ctx.strokeStyle=`rgba(255,255,255,${1-d/maxDist})`;
+                    ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+                }
+            }
+            if(mouse.x!=null){
+                const p=particles[i];
+                const dx=p.x-mouse.x, dy=p.y-mouse.y, d=Math.hypot(dx,dy);
+                if(d<120){
+                    ctx.beginPath();
+                    ctx.strokeStyle="rgba(0,255,255,0.3)";
+                    ctx.moveTo(p.x,p.y); ctx.lineTo(mouse.x,mouse.y); ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p=>{p.update();p.draw();});
+        connect();
+        requestAnimationFrame(animate);
+    }
+
+    particles = Array.from({length:num}, () => new P());
+    animate();
+});
+</script>
+{% endblock %}

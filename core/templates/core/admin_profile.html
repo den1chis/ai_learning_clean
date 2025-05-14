@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% block title %}Профиль администратора{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <div class="bg-gradient-to-tr from-indigo-700 to-purple-700 rounded-2xl p-8 shadow-xl text-white">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-3xl font-extrabold">👤 Профиль администратора</h1>
+      <span class="text-sm bg-indigo-800 px-3 py-1 rounded-xl border border-indigo-500">
+        {{ admin_user.get_role_display }}
+      </span>
+    </div>
+
+    <div class="space-y-4 text-white">
+      <p><span class="font-semibold text-indigo-200">Имя пользователя:</span> {{ admin_user.username }}</p>
+      <p><span class="font-semibold text-indigo-200">Email:</span> {{ admin_user.email }}</p>
+    </div>
+  </div>
+
+  <div class="mt-10 grid gap-4 sm:grid-cols-2">
+    <a href="{% url 'manage_courses' %}" class="block bg-[#1e293b] hover:bg-indigo-700 transition-all text-white font-medium rounded-xl p-6 border border-indigo-500 shadow">
+      📚 Управление курсами
+    </a>
+    <a href="{% url 'admin_students' %}" class="block bg-[#1e293b] hover:bg-indigo-700 transition-all text-white font-medium rounded-xl p-6 border border-indigo-500 shadow">
+      👥 Список студентов
+    </a>
+  </div>
+</div>
+{% endblock %}

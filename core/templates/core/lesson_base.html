@@ -1,0 +1,17 @@
+<!-- core/templates/core/lesson_base.html -->
+{% extends "core/base.html" %}
+{% block content %}
+<div class="flex">
+  <!-- Левая панель -->
+  <div class="sidebar h-full overflow-y-auto scrollbar-hide">
+    {% include 'core/sidebar.html' with all_modules=all_modules lesson_progress=lesson_progress %}
+
+  </div>
+  
+
+  <!-- Основное содержимое -->
+  <main class="flex-1">
+    {% block lesson_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
