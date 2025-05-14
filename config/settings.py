@@ -143,11 +143,8 @@ ENCODER_PATH = os.path.join(BASE_DIR, 'core', 'ml', 'label_encoder.pkl')
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host and host != '*']
 
 
-if os.getenv("RAILWAY_RUN_MIGRATIONS", "False") == "True":
-    try:
-        import django
-        django.setup()
-        from django.core.management import call_command
-        call_command("migrate")
-    except Exception as e:
-        print("⚠ Ошибка миграции:", e)
+if os.getenv("RAILWAY_RUN_MIGRATIONS") == "True":
+    import django
+    django.setup()
+    from django.core.management import call_command
+    call_command("migrate")
