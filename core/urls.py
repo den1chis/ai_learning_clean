@@ -66,4 +66,11 @@ urlpatterns = [
     path('quizzes/add/', crud_views.add_quiz, name='add_quiz'),
     path('quizzes/<int:quiz_id>/edit/', crud_views.edit_quiz, name='edit_quiz'),
     path('quizzes/<int:quiz_id>/delete/', crud_views.delete_quiz, name='delete_quiz'),
+
+
+    # 🔹 Задания
+    path('tasks/<int:lesson_id>/', crud_views.manage_tasks, name='manage_tasks'),
+    path('tasks/add/', crud_views.add_task, name='add_task'),
+    path('tasks/<int:task_id>/edit/', crud_views.edit_task, name='edit_task'),
+    path('tasks/<int:task_id>/delete/', crud_views.delete_task, name='delete_task'),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
