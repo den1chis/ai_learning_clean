@@ -5,6 +5,7 @@ from core.forms import ProfileUpdateForm, CustomPasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 
+
 @login_required
 def profile_settings_view(request):
     user = request.user
