@@ -13,6 +13,14 @@ from core.models import (
     Recommendation, UserProgress
 )
 
+import requests
+from io import BytesIO
+
+def load_from_huggingface(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return load(BytesIO(response.content))
+
 
 @login_required
 def test_start(request):
@@ -79,11 +87,13 @@ def test_loading(request):
     # просто страница с “загрузкой”
     return render(request, 'core/test_loading.html')
 
+@login_required
 def test_result(request):
-    from joblib import load
-    import os
     import numpy as np
-    from core.models import Module, Question, UserAnswer, Recommendation, UserProgress
+    from core.models import Module, Question, UserAnswer, Recommendation, UserProgress, Lesson
+
+    MODEL_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/ai_recommendation_model.pkl"
+    ENCODER_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/label_encoder.pkl"
 
     qs_ids = request.session.pop('test_qs', [])
     answers = request.session.pop('test_ans', [])
@@ -97,7 +107,7 @@ def test_result(request):
     for a in answers:
         q_id = a['q_id']
         if q_id in seen_q_ids:
-            continue  # ⛔ пропускаем дублирующий вопрос
+            continue
         seen_q_ids.add(q_id)
 
         q = Question.objects.get(pk=q_id)
@@ -121,10 +131,8 @@ def test_result(request):
         for m in modules
     ]])
 
-    model_path = os.path.join(settings.BASE_DIR, 'ai_recommendation_model.pkl')
-    encoder_path = os.path.join(settings.BASE_DIR, 'label_encoder.pkl')
-    model = load(model_path)
-    encoder = load(encoder_path)
+    model = load_from_huggingface(MODEL_URL)
+    encoder = load_from_huggingface(ENCODER_URL)
 
     try:
         pred_label = model.predict(features)[0]
@@ -139,7 +147,7 @@ def test_result(request):
         recommendation_type='next_module',
         confidence_score=0.0
     )
-    # создаём прогресс по первому уроку рекомендованного модуля
+
     first_lesson = Lesson.objects.filter(module=rec_module).order_by('order_index').first()
     if first_lesson:
         LessonProgress.objects.get_or_create(user=request.user, lesson=first_lesson)
@@ -164,6 +172,8 @@ def test_result(request):
         'rec_module': rec_module,
         'demo_info': demo_info
     })
+
+
 @login_required
 def test_view(request):
     # 1) по 3 вопроса из каждого модуля
