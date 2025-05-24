@@ -50,8 +50,8 @@
 
   <canvas id="ai-canvas"></canvas>
 
-  <!-- Фиксированный навбар -->
-  <nav class="bg-[#111827] p-4 flex justify-between items-center fixed top-0 left-0 w-full z-50 border-b border-gray-700 shadow-md">
+  <!-- Навбар (не фиксированный) -->
+  <nav class="bg-[#111827] p-4 flex justify-between items-center border-b border-gray-700 shadow-md relative z-20">
     <a href="{% url 'home' %}" class="gradient-logo hover:glow transition duration-300">
       Adaptive AI
     </a>
@@ -86,7 +86,7 @@
     {% endif %}
   </nav>
 
-  <main class="flex-grow pt-[80px] relative z-10">
+  <main class="flex-grow relative z-10">
     {% block content %}{% endblock %}
   </main>
 
@@ -96,6 +96,7 @@
 
   {% block scripts %}
   <script>
+    // Canvas animation
     document.addEventListener("DOMContentLoaded", () => {
       const canvas = document.getElementById("ai-canvas");
       const ctx = canvas.getContext("2d");
@@ -190,19 +191,19 @@
       animate();
     });
 
-    // dropdown по клику
+    // dropdown toggle
     document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById("user-menu");
-      const dropdown = document.getElementById("user-dropdown");
+      const toggle = document.getElementById("user-toggle");
+      const menu = document.getElementById("user-dropdown");
 
       toggle?.addEventListener("click", (e) => {
         e.stopPropagation();
-        dropdown.classList.toggle("hidden");
+        menu.classList.toggle("hidden");
       });
 
       document.addEventListener("click", (e) => {
-        if (!toggle.contains(e.target)) {
-          dropdown.classList.add("hidden");
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.add("hidden");
         }
       });
     });
