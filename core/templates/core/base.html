@@ -50,49 +50,43 @@
 
   <canvas id="ai-canvas"></canvas>
 
-  <!-- Навбар (больше не фиксирован) -->
-  <nav class="bg-[#111827] p-4 flex justify-between items-center relative z-20">
-    <!-- Логотип -->
+  <!-- Фиксированный навбар -->
+  <nav class="bg-[#111827] p-4 flex justify-between items-center fixed top-0 left-0 w-full z-50 border-b border-gray-700 shadow-md">
     <a href="{% url 'home' %}" class="gradient-logo hover:glow transition duration-300">
-        Adaptive AI
+      Adaptive AI
     </a>
 
-    <!-- Справа: меню -->
     {% if user.is_authenticated %}
-    <div id="user-menu" class="relative inline-block">
-        <!-- Триггер -->
-        <div class="flex items-center space-x-3 cursor-pointer">
-            {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full border border-indigo-500">
-            {% else %}
-                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm font-bold flex items-center justify-center">
-                    {{ user.username|slice:":1"|upper }}
-                </div>
-            {% endif %}
-            <span class="text-white text-sm font-medium">{{ user.username }}</span>
-        </div>
-        <!-- Выпадающее меню -->
-        <div id="user-dropdown" class="hidden absolute right-0 top-full w-48 bg-[#1e293b] border border-gray-700 rounded-xl shadow-lg py-2 text-sm z-50">
-            {% if user.role == 'admin' %}
-                <a href="{% url 'admin_profile' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Профиль администратора</a>
-            {% else %}
-                <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Личный кабинет</a>
-            {% endif %}
-            <a href="{% url 'profile_settings' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Настройки профиля</a>
-
-            <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Выйти</a>
-        </div>
-
+    <div id="user-menu" class="relative inline-block text-left">
+      <button id="user-toggle" type="button" class="flex items-center space-x-3 cursor-pointer focus:outline-none">
+        {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full border border-indigo-500">
+        {% else %}
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm font-bold flex items-center justify-center">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+        {% endif %}
+        <span class="text-white text-sm font-medium">{{ user.username }}</span>
+      </button>
+      <div id="user-dropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-[#1e293b] border border-gray-700 rounded-xl shadow-lg py-2 text-sm z-50">
+        {% if user.role == 'admin' %}
+          <a href="{% url 'admin_profile' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Профиль администратора</a>
+        {% else %}
+          <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Личный кабинет</a>
+        {% endif %}
+        <a href="{% url 'profile_settings' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Настройки профиля</a>
+        <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-indigo-600">Выйти</a>
+      </div>
+    </div>
     {% else %}
     <div class="space-x-4">
-        <a href="{% url 'login' %}"    class="text-gray-300 hover:text-indigo-400">Войти</a>
-        <a href="{% url 'register' %}" class="text-gray-300 hover:text-indigo-400">Регистрация</a>
+      <a href="{% url 'login' %}" class="text-gray-300 hover:text-indigo-400">Войти</a>
+      <a href="{% url 'register' %}" class="text-gray-300 hover:text-indigo-400">Регистрация</a>
     </div>
     {% endif %}
-</nav>
+  </nav>
 
-
-  <main class="flex-grow relative z-10">
+  <main class="flex-grow pt-[80px] relative z-10">
     {% block content %}{% endblock %}
   </main>
 
@@ -102,7 +96,6 @@
 
   {% block scripts %}
   <script>
-    // canvas animation
     document.addEventListener("DOMContentLoaded", () => {
       const canvas = document.getElementById("ai-canvas");
       const ctx = canvas.getContext("2d");
@@ -197,18 +190,19 @@
       animate();
     });
 
-    // dropdown
+    // dropdown по клику
     document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById('user-toggle');
-      const menu = document.getElementById('user-dropdown');
+      const toggle = document.getElementById("user-menu");
+      const dropdown = document.getElementById("user-dropdown");
 
-      toggle?.addEventListener("click", () => {
-        menu.classList.toggle('hidden');
+      toggle?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("hidden");
       });
 
       document.addEventListener("click", (e) => {
-        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
-          menu.classList.add('hidden');
+        if (!toggle.contains(e.target)) {
+          dropdown.classList.add("hidden");
         }
       });
     });
