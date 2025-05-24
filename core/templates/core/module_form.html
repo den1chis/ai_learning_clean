@@ -9,6 +9,7 @@
     <a href="{% url 'manage_lessons' module.id %}" class="inline-block mb-6 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-white rounded">
       📚 Редактировать уроки
     </a>
+    <a href="{% url 'manage_modules' module.course.id %}" class="mb-6 inline-block text-gray-400 hover:text-white">← Назад к модулям курса</a>
   {% endif %}
 
   <form method="post" class="space-y-6">

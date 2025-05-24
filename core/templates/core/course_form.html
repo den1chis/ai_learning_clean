@@ -9,6 +9,8 @@
     <a href="{% url 'manage_modules' course.id %}" class="inline-block mb-6 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-white rounded">
       📦 Редактировать модули
     </a>
+    
+    <a href="{% url 'manage_courses' %}" class="mt-8 inline-block text-gray-400 hover:text-white">← Назад к курсам</a>
   {% endif %}
 
   <form method="post" class="space-y-6">
@@ -17,5 +19,6 @@
     <button type="submit" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded text-white font-semibold">💾 Сохранить</button>
     <a href="{% url 'manage_courses' %}" class="text-gray-400 hover:text-white ml-4">Отмена</a>
   </form>
+
 </div>
 {% endblock %}

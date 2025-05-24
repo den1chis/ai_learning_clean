@@ -1,122 +1,102 @@
 {% extends "core/base.html" %}
-
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<div class="relative hero h-screen w-full overflow-hidden">
-    <!-- Анимированный фон -->
-    <canvas id="ai-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
-
-    <!-- Контент -->
-    <div class="relative z-10 flex flex-col justify-center items-center h-full text-center px-4">
-        <h1 class="text-5xl font-extrabold text-white mb-6">Обучение с Искусственным Интеллектом</h1>
-        <p class="text-gray-400 max-w-xl mb-8">AI адаптирует программу под твой уровень знаний</p>
-        <a href="#" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-xl text-white font-semibold shadow-lg transition">
+<!-- Блок 1: Обучение с ИИ -->
+<section class="pt-[80px] pb-8 px-4 text-center">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-5xl font-extrabold text-white mb-6 glow">Обучение с Искусственным Интеллектом</h1>
+        <p class="text-gray-300 text-lg leading-relaxed mb-6">
+            Персонализированное обучение программированию. Пройди стартовое тестирование, получи рекомендованный модуль для старта, решай задачи и отслеживай прогресс.
+        </p>
+        <a href="{% url 'login' %}" class="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-xl text-white font-semibold shadow-xl transition">
             Начать обучение
         </a>
     </div>
-</div>
-{% endblock %}
+</section>
 
-{% block scripts %}
-  {{ block.super }}
+<!-- Блок 2: Как работает обучение + О платформе -->
+<section class="pt-8 pb-8">
+    <div class="max-w-6xl mx-auto px-6 bg-[#1e293b]/80 border border-gray-700 rounded-2xl shadow-2xl p-6">
+        <h2 class="text-3xl font-bold text-white mb-8 text-center glow">Как работает платформа?</h2>
+        <div class="grid md:grid-cols-3 gap-6 text-white">
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">🧪 Входной тест</h3>
+                <p class="text-gray-300">
+                    AI задаёт вопросы по базовым темам: переменные, циклы, логика. На основе ответов — выбор начального модуля. Нет стресса — просто честная оценка старта.
+                </p>
+            </div>
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">📚 Уроки и практика</h3>
+                <p class="text-gray-300">
+                    Каждый урок включает: <br>
+                    1) теорию — с примерами и пояснениями; <br>
+                    2) код-задание — запускаешь в браузере; <br>
+                    3) мини-тест — чтобы закрепить. <br>
+                    Всё проверяется автоматически.
+                </p>
+            </div>
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">🔓 Автоматическое открытие модулей</h3>
+                <p class="text-gray-300">
+                    Пройден урок — открылся следующий. Задание выполнено — получаешь доступ к следующему шагу. Платформа автоматически отслеживает твой прогресс и обеспечивает чёткую и понятную структуру без хаоса.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-      const canvas = document.getElementById("ai-canvas");
-      const ctx = canvas.getContext("2d");
-      const heroSection = document.querySelector(".hero");
+<!-- Блок 3: Кому подойдёт -->
+<section class="pt-8 pb-10">
+    <div class="max-w-6xl mx-auto px-6 bg-[#1e293b]/80 border border-gray-700 rounded-2xl shadow-2xl p-6">
+        <h2 class="text-3xl font-bold text-white mb-8 text-center glow">Кому подойдёт платформа?</h2>
+        <div class="grid md:grid-cols-3 gap-6 text-white">
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">👶 Новичкам</h3>
+                <p class="text-gray-300">
+                    Платформа объясняет как для друга: без термина «итератор» до того, как ты поймёшь, что такое цикл. Задания простые, понятные и логически выстроены. Первый день — и ты уже пишешь работающий код.
+                </p>
+            </div>
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">🧠 Тем, кто уже начал</h3>
+                <p class="text-gray-300">
+                    Работал с Python раньше? Тогда получи углубленное объяснение любой из тем. Решай более сложные задачи, закрепляй пройденный материал. Доводи свои навыки и знания до идеала.
+                </p>
+            </div>
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">👩‍🏫 Преподавателям</h3>
+                <p class="text-gray-300">
+                    Админ-панель: следи за студентами, загружай задания и анализируй результаты. Платформа даёт полную прозрачность и автоматизацию.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
-      function resizeCanvas() {
-          canvas.width = heroSection.offsetWidth;
-          canvas.height = heroSection.offsetHeight;
-      }
-      resizeCanvas();
-      window.addEventListener("resize", resizeCanvas);
-
-      let particles = [];
-      const numParticles = 60;
-      const maxDistance = 100;
-      let mouse = { x: null, y: null };
-
-      window.addEventListener("mousemove", (e) => {
-          const rect = canvas.getBoundingClientRect();
-          mouse.x = e.clientX - rect.left;
-          mouse.y = e.clientY - rect.top;
-      });
-
-      window.addEventListener("mouseout", () => {
-          mouse.x = null;
-          mouse.y = null;
-      });
-
-      class Particle {
-          constructor() {
-              this.x = Math.random() * canvas.width;
-              this.y = Math.random() * canvas.height;
-              this.vx = (Math.random() - 0.5) * 1.2;
-              this.vy = (Math.random() - 0.5) * 1.2;
-              this.size = 1 + Math.random();
-          }
-
-          update() {
-              this.x += this.vx;
-              this.y += this.vy;
-
-              if (this.x <= 0 || this.x >= canvas.width) this.vx *= -1;
-              if (this.y <= 0 || this.y >= canvas.height) this.vy *= -1;
-          }
-
-          draw() {
-              ctx.beginPath();
-              ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-              ctx.fillStyle = "#00ffff";
-              ctx.fill();
-          }
-      }
-
-      function connectParticles() {
-          for (let i = 0; i < particles.length; i++) {
-              for (let j = i + 1; j < particles.length; j++) {
-                  const dx = particles[i].x - particles[j].x;
-                  const dy = particles[i].y - particles[j].y;
-                  const dist = Math.sqrt(dx * dx + dy * dy);
-
-                  if (dist < maxDistance) {
-                      ctx.beginPath();
-                      ctx.strokeStyle = "rgba(255,255,255," + (1 - dist / maxDistance) + ")";
-                      ctx.lineWidth = 0.7;
-                      ctx.moveTo(particles[i].x, particles[i].y);
-                      ctx.lineTo(particles[j].x, particles[j].y);
-                      ctx.stroke();
-                  }
-              }
-
-              if (mouse.x !== null && mouse.y !== null) {
-                  const dx = particles[i].x - mouse.x;
-                  const dy = particles[i].y - mouse.y;
-                  const dist = Math.sqrt(dx * dx + dy * dy);
-
-                  if (dist < 120) {
-                      ctx.beginPath();
-                      ctx.strokeStyle = "rgba(0,255,255,0.3)";
-                      ctx.moveTo(particles[i].x, particles[i].y);
-                      ctx.lineTo(mouse.x, mouse.y);
-                      ctx.stroke();
-                  }
-              }
-          }
-      }
-
-      function animate() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          particles.forEach(p => { p.update(); p.draw(); });
-          connectParticles();
-          requestAnimationFrame(animate);
-      }
-
-      particles = Array.from({ length: numParticles }, () => new Particle());
-      animate();
-  });
-  </script>
+<!-- 🔥 Новый блок: Примеры заданий -->
+<section class="pt-8 pb-10">
+    <div class="max-w-6xl mx-auto px-6 bg-[#1e293b]/80 border border-gray-700 rounded-2xl shadow-2xl p-6">
+        <h2 class="text-3xl font-bold text-white mb-8 text-center glow">Какие задания тебя ждут?</h2>
+        <div class="grid md:grid-cols-3 gap-6 text-white">
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">📘 Теория</h3>
+                <p class="text-gray-300">
+                    Всё написано простым языком и сопровождается понятными примерами. Есть подсветка кода, оформление, структура.
+                </p>
+            </div>
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">🧮 Код</h3>
+                <p class="text-gray-300">
+                    Задача: «написать функцию, которая возвращает максимальное число из списка». Встроенный редактор — запускаешь, тестируешь, получаешь результат. AI подскажет, если где-то промах.
+                </p>
+            </div>
+            <div class="bg-[#0f172a]/70 border border-gray-600 rounded-xl p-4">
+                <h3 class="text-xl font-bold mb-2">✅ Мини-тест</h3>
+                <p class="text-gray-300">
+                    Закрепление: 3-5 вопроса с вариантами ответов. Прошёл — открывается следующий шаг. 
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

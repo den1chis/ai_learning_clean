@@ -2,13 +2,13 @@
 {% block title %}Вход{% endblock %}
 
 {% block content %}
-<div class="relative hero min-h-screen overflow-hidden">
+<div class="relative hero min-h-screen flex items-center justify-center overflow-hidden px-4">
     <canvas id="ai-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
 
-    <div class="relative z-10 flex flex-col justify-center items-center h-full px-4">
+    <div class="relative z-10 w-full max-w-md text-center">
         <h2 class="text-3xl font-bold text-white mb-6">Добро пожаловать</h2>
 
-        <form method="POST" autocomplete="off" class="w-full max-w-md bg-[#1e293b]/60 backdrop-blur-md p-6 rounded-xl shadow-xl space-y-4">
+        <form method="POST" autocomplete="off" class="bg-[#1e293b]/60 backdrop-blur-md p-6 rounded-xl shadow-xl space-y-4 text-left">
             {% csrf_token %}
 
             {% for field in form %}
@@ -34,6 +34,11 @@
                 Войти
             </button>
         </form>
+
+        <p class="mt-4 text-sm text-gray-400">
+            Нет аккаунта?
+            <a href="{% url 'register' %}" class="text-indigo-400 hover:underline">Создать аккаунт</a>
+        </p>
     </div>
 </div>
 {% endblock %}
