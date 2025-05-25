@@ -161,12 +161,33 @@ class TaskForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded h-24'}),
             'description_easy': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-blue-300 border border-gray-600 rounded h-24'}),
             'description_hard': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-purple-300 border border-gray-600 rounded h-24'}),
-            'input_data': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-gray-300 border border-gray-600 rounded h-20'}),
-            'expected_output': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-green-300 border border-gray-600 rounded h-20'}),
-            'expected_output_easy': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-blue-300 border border-gray-600 rounded h-20'}),
-            'expected_output_hard': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-purple-300 border border-gray-600 rounded h-20'}),
+            'input_data': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-gray-300 border border-gray-600 rounded h-20 font-mono',
+                'style': 'white-space: pre-wrap'
+            }),
+            'expected_output': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-green-300 border border-gray-600 rounded h-32 font-mono',
+                'style': 'white-space: pre-wrap'
+            }),
+            'expected_output_easy': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-blue-300 border border-gray-600 rounded h-32 font-mono',
+                'style': 'white-space: pre-wrap'
+            }),
+            'expected_output_hard': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-purple-300 border border-gray-600 rounded h-32 font-mono',
+                'style': 'white-space: pre-wrap'
+            }),
             'is_ai_adaptive': forms.CheckboxInput(attrs={'class': 'form-checkbox text-indigo-600'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        for field in ['expected_output', 'expected_output_easy', 'expected_output_hard']:
+            value = cleaned_data.get(field)
+            if value:
+                cleaned_data[field] = value.replace('\r\n', '\n')
+        return cleaned_data
+
 
 
 class LessonQuizForm(forms.ModelForm):

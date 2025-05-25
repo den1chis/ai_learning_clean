@@ -7,12 +7,19 @@
   <canvas id="ai-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
   <div class="relative z-10 max-w-4xl mx-auto px-4 py-16 space-y-8">
 
-    <!-- Инфо пользователя -->
-    <div class="bg-[#1e293b]/60 backdrop-blur-md p-6 rounded-xl text-white shadow-xl">
-      <h2 class="text-3xl font-bold mb-4">Привет, {{ user.username }}!</h2>
-      <p><span class="text-gray-400">Email:</span> {{ user.email }}</p>
-      <p><span class="text-gray-400">Последний вход:</span> {{ user.last_login|date:"d.m.Y H:i" }}</p>
+    <!-- Инфо пользователя с аватаром слева -->
+    <!-- Инфо пользователя с аватаром слева -->
+    <div class="bg-[#1e293b]/60 backdrop-blur-md p-6 rounded-xl text-white shadow-xl flex items-center space-x-6">
+      <img src="{{ user.avatar.url }}"
+          class="w-24 h-24 rounded-full border border-gray-500 object-cover shadow-lg"
+          alt="Аватар пользователя" />
+
+      <div>
+        <h2 class="text-3xl font-bold mb-2">Привет, {{ user.username }}!</h2>
+        <p class="text-gray-300"><span class="text-gray-400">Email:</span> {{ user.email }}</p>
+      </div>
     </div>
+
 
     <!-- Блок тестирования / рекомендации -->
     {% if recommended_module %}
@@ -95,17 +102,6 @@
       </div>
     </div>
 
-    <!-- Последние действия -->
-    <div>
-      <h3 class="text-2xl font-semibold text-white mb-4">🕓 Последние действия</h3>
-      <ul class="space-y-2">
-        {% for action in recent_actions %}
-          <li class="text-sm text-gray-300">• {{ action }}</li>
-        {% empty %}
-          <li class="text-gray-500 text-sm">Нет активности за последнее время.</li>
-        {% endfor %}
-      </ul>
-    </div>
 
     <!-- Настройки профиля -->
     <div class="text-right">

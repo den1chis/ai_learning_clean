@@ -60,7 +60,10 @@
     <div id="user-menu" class="relative inline-block text-left">
       <button id="user-toggle" type="button" class="flex items-center space-x-3 cursor-pointer focus:outline-none">
         {% if user.avatar %}
-          <img src="{{ user.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full border border-indigo-500">
+          <img src="{{ user.avatar.url }}"
+          class="w-9 h-9 rounded-full border mt-2 object-cover"
+          alt="Аватар пользователя" />
+  
         {% else %}
           <div class="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm font-bold flex items-center justify-center">
             {{ user.username|slice:":1"|upper }}

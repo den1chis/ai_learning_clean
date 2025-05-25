@@ -26,7 +26,10 @@
       {{ profile_form.avatar }}
     </div>
     {% if user.avatar %}
-      <img src="{{ user.avatar.url }}" class="w-20 h-20 rounded-full border mt-2" />
+      <img src="{{ user.avatar.url }}"
+      class="w-20 h-20 rounded-full border mt-2 object-cover"
+      alt="Аватар пользователя" />
+
     {% endif %}
     <button type="submit" name="update_profile"
             class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded text-white font-semibold mt-4">

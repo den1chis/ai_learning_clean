@@ -94,12 +94,23 @@ def check_user_code(request, tasks, user_tasks_dict):
     import subprocess
     import os
 
+    def normalize_output(text):
+        lines = text.strip().splitlines()
+        return '\n'.join(line.rstrip() for line in lines)
+
     task_id = int(request.POST.get("task_id", 0))
     code = request.POST.get("code", "")
+    task_level = request.POST.get("task_level", "default")
     task = next((t for t in tasks if t.id == task_id), None)
 
     if not task:
         return {"output": "Задание не найдено.", "is_correct": False, "task_id": task_id}
+
+    # 💡 Отладка — смотрим, что приходит
+    print(f"[DEBUG] task_level: {task_level}")
+
+    expected = getattr(task, f"expected_output_{task_level}", None) or task.expected_output or ""
+    print(f"[DEBUG] expected_output:\n{repr(expected)}")
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".py", mode='w', encoding='utf-8') as temp_file:
         temp_file.write(code)
@@ -112,8 +123,8 @@ def check_user_code(request, tasks, user_tasks_dict):
             text=True,
             timeout=5
         )
-        stdout = result.stdout.strip()
-        stderr = result.stderr.strip()
+        stdout = result.stdout
+        stderr = result.stderr
         output = stdout if stdout else stderr
         hint = ""
 
@@ -129,12 +140,15 @@ def check_user_code(request, tasks, user_tasks_dict):
         elif "TypeError" in stderr:
             hint = "💡 Возможно, вы используете операцию не для того типа данных."
 
-        # объединяем вывод
         if hint:
             output += "\n\n=== ПОДСКАЗКА ===\n" + hint
 
+        is_correct = normalize_output(stdout) == normalize_output(expected)
 
-        is_correct = stdout == (task.expected_output or "").strip()
+        print(f"[DEBUG] stdout:\n{repr(stdout)}")
+        print(f"[DEBUG] normalized stdout: {normalize_output(stdout)}")
+        print(f"[DEBUG] normalized expected: {normalize_output(expected)}")
+        print(f"[DEBUG] is_correct = {is_correct}")
 
     except subprocess.TimeoutExpired:
         output = "⏱ Превышено время выполнения"
@@ -145,7 +159,6 @@ def check_user_code(request, tasks, user_tasks_dict):
     finally:
         os.remove(temp_path)
 
-    # Обновление/создание результата
     user_task = user_tasks_dict.get(task_id)
     if user_task:
         user_task.code = code
@@ -159,7 +172,7 @@ def check_user_code(request, tasks, user_tasks_dict):
             code=code,
             output=output,
             is_correct=is_correct,
-            attempts = 1
+            attempts=1
         )
         user_tasks_dict[task_id] = user_task
 
@@ -167,4 +180,5 @@ def check_user_code(request, tasks, user_tasks_dict):
         "output": output,
         "is_correct": is_correct,
         "task_id": task_id,
+        "hint": hint
     }

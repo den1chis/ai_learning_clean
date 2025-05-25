@@ -9,9 +9,11 @@
         <p class="text-gray-300 text-lg leading-relaxed mb-6">
             Персонализированное обучение программированию. Пройди стартовое тестирование, получи рекомендованный модуль для старта, решай задачи и отслеживай прогресс.
         </p>
-        <a href="{% url 'login' %}" class="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-xl text-white font-semibold shadow-xl transition">
+        <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}"
+            class="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-xl text-white font-semibold shadow-xl transition">
             Начать обучение
         </a>
+     
     </div>
 </section>
 
