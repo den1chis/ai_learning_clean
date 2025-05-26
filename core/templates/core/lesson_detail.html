@@ -29,9 +29,18 @@
     <div id="task-{{ task.id }}" class="bg-[#1e293b] p-4 my-6 rounded border border-gray-700">
       <p class="text-white font-semibold mb-2">Задание {{ forloop.counter }}:</p>
       <div class="text-gray-300 mb-4">
-        <div id="task-desc-{{ task.id }}-easy" class="hidden">{{ task.description_easy|default:task.description }}</div>
-        <div id="task-desc-{{ task.id }}-default">{{ task.description }}</div>
-        <div id="task-desc-{{ task.id }}-hard" class="hidden">{{ task.description_hard|default:task.description }}</div>
+        <div id="task-desc-{{ task.id }}-easy" class="hidden">
+          {{ task.description_easy|default:task.description|linebreaksbr }}
+        </div>
+        
+        <div id="task-desc-{{ task.id }}-default">
+          {{ task.description|linebreaksbr }}
+        </div>
+        
+        <div id="task-desc-{{ task.id }}-hard" class="hidden">
+          {{ task.description_hard|default:task.description|linebreaksbr }}
+        </div>
+        
       
         <div class="mt-2 space-x-2">
           <button onclick="setTaskLevel('{{ task.id }}', 'easy')" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">Проще</button>

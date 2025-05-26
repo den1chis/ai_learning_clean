@@ -19,7 +19,7 @@
                 <li><span class="text-blue-400 font-semibold text-sm">▶ {{ less.title }}</span></li>
               {% elif lp and lp.completed %}
                 <li><a href="{% url 'lesson_detail' mod.id less.order_index %}" class="text-green-400 hover:underline text-sm">✔ {{ less.title }}</a></li>
-              {% elif forloop.first or lesson_progress|get_item:lessons|prev_lesson_id:forloop.counter0 %}
+              {% elif lesson_progress|get_item:lessons|prev_lesson_id:forloop.counter0 and lesson_progress|get_item:lessons|prev_lesson_id:forloop.counter0.completed %}
                 <li><a href="{% url 'lesson_detail' mod.id less.order_index %}" class="text-indigo-200 hover:underline text-sm">{{ less.title }}</a></li>
               {% else %}
                 <li class="text-gray-500 text-sm select-none">🔒 {{ less.title }}</li>
