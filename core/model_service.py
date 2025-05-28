@@ -1,17 +1,15 @@
 import os
 import requests
 from joblib import load
-import os
-from django.conf import settings
 
-MODEL_PATH = os.path.join(settings.BASE_DIR, "ai_recommendation_model.pkl")
-ENCODER_PATH = os.path.join(settings.BASE_DIR, "label_encoder.pkl")
+# Путь к volume — смонтирован как /app/models/
+MODEL_PATH = "/app/models/ai_recommendation_model.pkl"
+ENCODER_PATH = "/app/models/label_encoder.pkl"
 
-# ⬇️ Ссылки на Hugging Face
+# Hugging Face ссылки
 MODEL_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/ai_recommendation_model.pkl"
 ENCODER_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/label_encoder.pkl"
 
-# Кеш модели и энкодера в памяти (глобально)
 _model = None
 _encoder = None
 
@@ -19,16 +17,21 @@ def _download_if_missing(url: str, path: str):
     if not os.path.exists(path):
         print(f"[MODEL] ⏳ Загружаем: {url} → {path}")
         try:
-            r = requests.get(url, stream=True, timeout=30)
-            r.raise_for_status()
-            with open(path, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-            print(f"[MODEL] ✅ Файл сохранён: {path}")
-        except requests.exceptions.RequestException as e:
-            print(f"[MODEL ERROR] ❌ Ошибка при загрузке {url}: {e}")
-            raise RuntimeError(f"Не удалось загрузить файл модели: {url}")
+            with requests.get(url, stream=True, timeout=60) as r:
+                r.raise_for_status()
+
+                total = int(r.headers.get('content-length', 0))
+                downloaded = 0
+
+                with open(path, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if chunk:
+                            f.write(chunk)
+                            downloaded += len(chunk)
+                print(f"[MODEL] ✅ Загружено: {path} ({round(downloaded / 1024 / 1024, 2)} MB)")
+        except Exception as e:
+            print(f"[MODEL ERROR] ❌ Ошибка загрузки: {e}")
+            raise RuntimeError("Не удалось загрузить модель")
 
 def load_model():
     global _model, _encoder
@@ -50,4 +53,4 @@ def get_prediction(features: list[float]) -> str:
         return label
     except Exception as e:
         print(f"[PREDICT ERROR] ❌ Ошибка предсказания: {e}")
-        raise RuntimeError("Предсказание не удалось.")
+        raise RuntimeError("Предсказание не удалось")
