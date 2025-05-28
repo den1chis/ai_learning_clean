@@ -87,14 +87,15 @@ def test_loading(request):
     # просто страница с “загрузкой”
     return render(request, 'core/test_loading.html')
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from core.models import Module, Question, UserAnswer, Recommendation, UserProgress, Lesson, LessonProgress
+from core.model_service import get_prediction  # ← наша новая обёртка
+import numpy as np
+
+
 @login_required
 def test_result(request):
-    import numpy as np
-    from core.models import Module, Question, UserAnswer, Recommendation, UserProgress, Lesson
-
-    MODEL_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/ai_recommendation_model.pkl"
-    ENCODER_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/label_encoder.pkl"
-
     qs_ids = request.session.pop('test_qs', [])
     answers = request.session.pop('test_ans', [])
 
@@ -104,6 +105,7 @@ def test_result(request):
 
     seen_q_ids = set()
 
+    # Сохраняем ответы пользователя
     for a in answers:
         q_id = a['q_id']
         if q_id in seen_q_ids:
@@ -126,38 +128,40 @@ def test_result(request):
         total[mid] = total.get(mid, 0) + 1
         correct[mid] = correct.get(mid, 0) + (1 if is_ok else 0)
 
+    # Преобразуем данные в признаки для модели
     features = np.array([[ 
         max((correct.get(m.id, 0) / total.get(m.id, 1)) * 100, 20) 
         for m in modules
     ]])
 
-    model = load_from_huggingface(MODEL_URL)
-    encoder = load_from_huggingface(ENCODER_URL)
-
+    # Получаем рекомендацию через модель
     try:
-        pred_label = model.predict(features)[0]
-        rec_name = encoder.inverse_transform([pred_label])[0]
+        rec_name = get_prediction(features[0])
         rec_module = Module.objects.get(title=rec_name)
-    except:
-        rec_module = modules[0]
+    except Exception as e:
+        print(f"[ERROR] Ошибка предсказания: {e}")
+        rec_module = modules[0] if modules else None
 
-    Recommendation.objects.create(
-        user=request.user,
-        module=rec_module,
-        recommendation_type='next_module',
-        confidence_score=0.0
-    )
+    # Сохраняем рекомендации и прогресс
+    if rec_module:
+        Recommendation.objects.create(
+            user=request.user,
+            module=rec_module,
+            recommendation_type='next_module',
+            confidence_score=0.0
+        )
 
-    first_lesson = Lesson.objects.filter(module=rec_module).order_by('order_index').first()
-    if first_lesson:
-        LessonProgress.objects.get_or_create(user=request.user, lesson=first_lesson)
+        first_lesson = Lesson.objects.filter(module=rec_module).order_by('order_index').first()
+        if first_lesson:
+            LessonProgress.objects.get_or_create(user=request.user, lesson=first_lesson)
 
-    UserProgress.objects.update_or_create(
-        user=request.user,
-        module=rec_module,
-        defaults={'completion_percent': 0, 'recommended_difficulty': None}
-    )
+        UserProgress.objects.update_or_create(
+            user=request.user,
+            module=rec_module,
+            defaults={'completion_percent': 0, 'recommended_difficulty': None}
+        )
 
+    # Статистика по модулям
     demo_info = []
     for m in modules:
         cnt = total.get(m.id, 0)
