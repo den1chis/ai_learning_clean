@@ -1,10 +1,11 @@
 import os
 import requests
 from joblib import load
+import os
+from django.conf import settings
 
-# ⬇️ Пути к моделям внутри подключённого VOLUME
-MODEL_PATH = "/app/models/ai_recommendation_model.pkl"
-ENCODER_PATH = "/app/models/label_encoder.pkl"
+MODEL_PATH = os.path.join(settings.BASE_DIR, "ai_recommendation_model.pkl")
+ENCODER_PATH = os.path.join(settings.BASE_DIR, "label_encoder.pkl")
 
 # ⬇️ Ссылки на Hugging Face
 MODEL_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/ai_recommendation_model.pkl"
