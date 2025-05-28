@@ -16,7 +16,8 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded text-white font-semibold">💾 Сохранить</button>
-    <a href="{% url 'manage_modules' module.course.id %}" class="text-gray-400 hover:text-white ml-4">Отмена</a>
+    <a href="{% url 'manage_modules' course.id %}" class="text-gray-400 hover:text-white ml-4">← Назад к модулям курса</a>
+
   </form>
 </div>
 {% endblock %}

@@ -113,7 +113,8 @@ def edit_module(request, module_id):
     return render(request, 'core/module_form.html', {
         'form': form,
         'title': 'Редактировать модуль',
-        'module': module  # ← это важно
+        'module': module,  
+        'course': module.course
     })
 @login_required
 @user_passes_test(is_admin)

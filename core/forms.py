@@ -116,14 +116,29 @@ class ModuleForm(forms.ModelForm):
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = ['title', 'content_html', 'content_html_easy', 'content_html_hard', 'order_index']
+        fields = ['title', 'content_type', 'content_html', 'content_html_easy', 'content_html_hard', 'order_index']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded'}),
-            'content_html': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded h-32'}),
-            'content_html_easy': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded h-32'}),
-            'content_html_hard': forms.Textarea(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded h-32'}),
-            'order_index': forms.NumberInput(attrs={'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded'}),
+            'title': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded'
+            }),
+            'content_type': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded'
+            }),
+            'content_html': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded h-32'
+            }),
+            'content_html_easy': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-blue-300 border border-gray-600 rounded h-32'
+            }),
+            'content_html_hard': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-purple-300 border border-gray-600 rounded h-32'
+            }),
+            'order_index': forms.NumberInput(attrs={
+                'class': 'w-full px-4 py-2 bg-[#1e293b] text-white border border-gray-600 rounded'
+            }),
         }
+
+
 
 
 

@@ -184,7 +184,8 @@ def lesson_by_index_view(request, module_id, order_index):
     task_easy_map = {t.id: t.description_easy for t in tasks}
     task_hard_map = {t.id: t.description_hard for t in tasks}
 
-    all_modules = Module.objects.prefetch_related('lesson_set').order_by('order_index')
+    all_modules = Module.objects.filter(course_id=1).prefetch_related('lesson_set').order_by('order_index')
+
     all_lesson_progress = LessonProgress.objects.filter(user=request.user)
     lesson_progress_map = {lp.lesson_id: lp for lp in all_lesson_progress}
 

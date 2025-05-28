@@ -3,34 +3,43 @@
 <div class="relative hero min-h-screen overflow-hidden">
   <canvas id="ai-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
 
-  <div class="relative z-10 max-w-md mx-auto p-6 bg-[#1e293b]/60 border border-gray-700 rounded-xl shadow-lg text-center text-white space-y-6 mt-12">
+  <div class="relative z-10 max-w-xl mx-auto p-8 bg-[#1e293b]/70 border border-indigo-500 rounded-2xl shadow-2xl text-white mt-16 space-y-8 backdrop-blur-md">
 
-    <h2 class="text-2xl font-bold">Результаты теста</h2>
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-indigo-300">Результаты теста</h2>
+      <p class="text-sm text-gray-400 mt-2">Анализ на основе твоих ответов</p>
+    </div>
 
-    <div class="space-y-1">
-      <p class="text-lg">🎯 Рекомендованный модуль:</p>
-      <h3 class="text-xl font-semibold">{{ rec_module.title }}</h3>
-      <p class="text-gray-400">{{ rec_module.description|truncatechars:120 }}</p>
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-6 rounded-xl text-left shadow-md">
+      <p class="text-sm uppercase tracking-wide text-indigo-100 font-semibold">🎯 Рекомендованный модуль</p>
+      <h3 class="text-2xl font-bold mt-1 text-white">{{ rec_module.title }}</h3>
+      <p class="mt-2 text-gray-200 text-sm">{{ rec_module.description|default:"Без описания"|truncatechars:120 }}</p>
     </div>
 
     {% if demo_info %}
-      <div class="bg-gray-800/50 p-4 rounded-lg text-left space-y-2 text-sm">
-        <h4 class="text-white font-semibold mb-1">📊 Статистика по модулям:</h4>
-        <ul class="space-y-1">
-          {% for info in demo_info %}
-            <li class="flex justify-between">
-              <span>{{ info.module.title }}</span>
-              <span>{{ info.count }}/5 ({{ info.percent }}%)</span>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
+    <div class="bg-[#111827] border border-gray-700 rounded-xl p-4 shadow-inner">
+      <h4 class="text-lg font-semibold text-indigo-200 mb-3">📊 Статистика по модулям</h4>
+      <ul class="space-y-3">
+        {% for info in demo_info %}
+        <li class="flex justify-between items-center text-sm text-gray-300">
+          <span class="font-medium text-white">{{ info.module.title }}</span>
+          <div class="flex items-center gap-2">
+            <div class="w-32 bg-gray-700 rounded-full h-2 overflow-hidden">
+              <div class="bg-green-400 h-2" style="width: {{ info.percent }}%"></div>
+            </div>
+            <span class="w-16 text-right">{{ info.count }}/5 ({{ info.percent }}%)</span>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
     {% endif %}
 
-    <a href="{% url 'dashboard' %}"
-       class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-xl">
-      В личный кабинет
-    </a>
+    <div class="text-center">
+      <a href="{% url 'dashboard' %}" class="inline-block bg-indigo-600 hover:bg-indigo-700 transition px-6 py-2 rounded-xl text-white font-semibold shadow-md">
+        Перейти в личный кабинет
+      </a>
+    </div>
   </div>
 </div>
 {% endblock %}

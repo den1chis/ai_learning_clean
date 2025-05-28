@@ -16,9 +16,11 @@
           <p class="text-gray-400 text-sm">{{ course.description|default:"Без описания" }}</p>
         </div>
         <div class="space-x-2">
+          <a href="{% url 'manage_modules' course.id %}" class="text-yellow-400 hover:text-yellow-200 font-medium">📦 Модули</a>
           <a href="{% url 'edit_course' course.id %}" class="text-blue-400 hover:text-blue-200 font-medium">✏ Редактировать</a>
           <a href="{% url 'delete_course' course.id %}" class="text-red-400 hover:text-red-200 font-medium">🗑 Удалить</a>
         </div>
+        
       </div>
     </div>
     {% empty %}
