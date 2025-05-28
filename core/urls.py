@@ -10,6 +10,7 @@ from core.views import (
 )
 from django.conf import settings
 from django.conf.urls.static import static
+from core.views.load_model_once import load_model_once
 
 urlpatterns = [
     # 🔹 Общие
@@ -73,4 +74,7 @@ urlpatterns = [
     path('tasks/add/', crud_views.add_task, name='add_task'),
     path('tasks/<int:task_id>/edit/', crud_views.edit_task, name='edit_task'),
     path('tasks/<int:task_id>/delete/', crud_views.delete_task, name='delete_task'),
+
+
+    path("load_model_once/", load_model_once, name="load_model_once"),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
