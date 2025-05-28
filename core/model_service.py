@@ -2,14 +2,15 @@ import os
 import requests
 from joblib import load
 
-# Путь к volume — смонтирован как /app/models/
+# Путь к volume — он должен быть смонтирован в /app/models
 MODEL_PATH = "/app/models/ai_recommendation_model.pkl"
 ENCODER_PATH = "/app/models/label_encoder.pkl"
 
-# Hugging Face ссылки
+# Ссылки на файлы модели и энкодера на Hugging Face
 MODEL_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/ai_recommendation_model.pkl"
 ENCODER_URL = "https://huggingface.co/den1chik/ai-model/resolve/main/label_encoder.pkl"
 
+# Кешированные переменные (один раз загружаются)
 _model = None
 _encoder = None
 
@@ -17,7 +18,8 @@ def _download_if_missing(url: str, path: str):
     if not os.path.exists(path):
         print(f"[MODEL] ⏳ Загружаем: {url} → {path}")
         try:
-            with requests.get(url, stream=True, timeout=60) as r:
+            # Увеличенные таймауты (connect 20 сек, read 300 сек)
+            with requests.get(url, stream=True, timeout=(20, 300)) as r:
                 r.raise_for_status()
 
                 total = int(r.headers.get('content-length', 0))
@@ -28,10 +30,13 @@ def _download_if_missing(url: str, path: str):
                         if chunk:
                             f.write(chunk)
                             downloaded += len(chunk)
-                print(f"[MODEL] ✅ Загружено: {path} ({round(downloaded / 1024 / 1024, 2)} MB)")
+
+                size_mb = round(downloaded / 1024 / 1024, 2)
+                print(f"[MODEL] ✅ Файл сохранён: {path} ({size_mb} MB)")
+
         except Exception as e:
-            print(f"[MODEL ERROR] ❌ Ошибка загрузки: {e}")
-            raise RuntimeError("Не удалось загрузить модель")
+            print(f"[MODEL ERROR] ❌ Ошибка при скачивании {url}: {e}")
+            raise RuntimeError(f"Не удалось скачать файл модели: {url}")
 
 def load_model():
     global _model, _encoder
