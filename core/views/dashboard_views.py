@@ -33,7 +33,6 @@ def profile_settings_view(request):
         'password_form': password_form
     })
 
-
 @login_required
 def dashboard_view(request):
     modules = list(Module.objects.filter(course_id=1).order_by('order_index'))
@@ -42,7 +41,6 @@ def dashboard_view(request):
            .filter(user=request.user, recommendation_type='next_module')
            .order_by('-timestamp')
            .first())
-
     recommended_module = rec.module if rec else None
 
     completed_lesson_ids = set(
@@ -54,7 +52,8 @@ def dashboard_view(request):
     all_lessons = 0
     completed_lessons = 0
     modules_info = []
-    unlocked_flag = True
+    unlocked = True
+    rec_found = False
 
     for m in modules:
         lessons = Lesson.objects.filter(module=m).order_by('order_index')
@@ -67,17 +66,22 @@ def dashboard_view(request):
 
         is_recommended = recommended_module and (m.id == recommended_module.id)
 
+        # Если рекомендованный модуль ещё не найден, все предыдущие (и он сам) — разблокированы
+        if recommended_module and not rec_found:
+            unlocked = True
+            if is_recommended:
+                rec_found = True
+        else:
+            unlocked = False
+
         modules_info.append({
             'module': m,
-            'unlocked': unlocked_flag or is_recommended,
+            'unlocked': unlocked or is_recommended,
             'recommended': is_recommended,
             'total_lessons': total,
             'completed_lessons': completed,
             'module_progress': int((completed / total) * 100) if total > 0 else 0
         })
-
-        if completed < total and not is_recommended:
-            unlocked_flag = False
 
     progress_percent = int((completed_lessons / all_lessons) * 100) if all_lessons > 0 else 0
 
